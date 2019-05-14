@@ -20,6 +20,9 @@ int AI_PIECE = 2;
 
 int WINDOW_LENGTH = 4;
 
+int max(int a, int b) { if (a > b) return a; else return b; }
+int min(int a, int b) { if (a < b) return a; else return b; }
+
 int** create_board()
 {
 	//creat 2d array (matrix 2d ) intialized by 0
@@ -35,6 +38,16 @@ int** create_board()
 	return board;
 }
 
+void copy(int** A, int**& B)
+{
+	for (int i = 0; i < ROW_COUNT; ++i) 
+	{
+		for (int j = 0; j < COLUMN_COUNT; ++j)
+		{
+			B[i][j] = A[i][j];
+		}
+	}
+}
 
 void drop_piece(int** board, int row, int col, int piece)
 {
@@ -293,4 +306,90 @@ bool is_terminal_node(int** board)
 		return true;
 	else
 		return false;
+}
+///////////////////////////////////////
+int* minimax(int** board, int depth, int alpha, int beta, int maximizingPlayer)
+{
+	int col_score[2];
+	vector <int> valid_locations = get_valid_locations(board);
+	bool is_terminal = is_terminal_node(board);
+		if (depth == 0 || is_terminal)
+		{
+			if (is_terminal)
+			{
+				if (winning_move(board, AI_PIECE))
+				{
+					col_score[0] = -1;
+					col_score[1] = 100000000000000;
+					return col_score;
+				}
+				else if (winning_move(board, PLAYER_PIECE))
+				{
+					col_score[0] = -1;
+					col_score[1] = -10000000000000;
+					return col_score;
+				}
+				else  // Game is over, no more valid moves
+				{
+					col_score[0] = -1;
+					col_score[1] = 0;
+					return col_score;
+				}
+			}
+			else // Depth is zero
+			{
+				col_score[0] = -1;
+				col_score[1] = score_position(board, AI_PIECE);
+				return col_score;
+			}
+		}
+		if (maximizingPlayer)
+		{
+			float value = -INFINITY;
+			//column = random.choice(valid_locations)
+			int column = valid_locations[0];
+			for (int col=0; col< valid_locations.size();col++)
+			{
+				int row = get_next_open_row(board, valid_locations[col]);
+				int** b_copy = create_board();
+				copy(board, b_copy);
+				drop_piece(b_copy, row, col, AI_PIECE);
+				int new_score = minimax(b_copy, depth - 1, alpha, beta, false)[1];
+				if (new_score > value)
+				{
+					value = new_score;
+					column = col;
+				}
+				alpha = max(alpha, int(value));
+				if (alpha >= beta) 
+					break;
+			}
+			col_score[0] = column;
+			col_score[1] = int(value);
+			return col_score;
+		}
+		else // Minimizing player
+		{ 
+			float value = INFINITY;
+			//column = random.choice(valid_locations)
+			int column = valid_locations[0];
+			for (int col = 0; col < valid_locations.size(); col++)
+			{
+				int row = get_next_open_row(board, col);
+				int** b_copy = create_board();
+				copy(board, b_copy);
+				drop_piece(b_copy, row, col, PLAYER_PIECE);
+				int new_score = minimax(b_copy, depth - 1, alpha, beta, true)[1];
+				if (new_score < int(value))
+				{
+					value = new_score;
+					column = col;
+				}
+				beta = min(beta, int(value));
+				if (alpha >= beta)
+					break;
+			}
+			col_score[0] = column;
+			col_score[1] = int(value);
+			return col_score;
 }
