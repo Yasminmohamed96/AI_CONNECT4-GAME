@@ -234,3 +234,63 @@ int score_position(int** board, int piece) {
 
 }
 
+//////////////////////////////
+bool winning_move(int** board, int piece)
+{
+	// Check horizontal locations for win
+	for (int c = 0; c < (COLUMN_COUNT - 3); c++)
+	{
+		for (int r = 0; r < (ROW_COUNT); r++)
+		{
+			if (board[r][c] == piece && board[r][c + 1] == piece && board[r][c + 2] == piece && board[r][c + 3] == piece)
+				return true;
+		}
+	}
+
+	// Check vertical locations for win
+	for (int c = 0; c < (COLUMN_COUNT); c++)
+	{
+		for (int r = 0; r < (ROW_COUNT - 3); r++)
+		{
+			if (board[r][c] == piece && board[r + 1][c] == piece && board[r + 2][c] == piece && board[r + 3][c] == piece)
+				return true;
+		}
+	}
+	// Check positively sloped diaganols
+	for (int c = 0; c < (COLUMN_COUNT - 3); c++)
+	{
+		for (int r = 0; r < (ROW_COUNT - 3); r++)
+		{
+			if (board[r][c] == piece && board[r + 1][c + 1] == piece && board[r + 2][c + 2] == piece && board[r + 3][c + 3] == piece)
+				return true;
+		}
+	}
+	// Check negatively sloped diaganols
+	for (int c = 0; c < (COLUMN_COUNT - 3); c++)
+	{
+		for (int r=0; r<(3, ROW_COUNT);r++)
+		{
+			if (board[r][c] == piece && board[r - 1][c + 1] == piece && board[r - 2][c + 2] == piece && board[r - 3][c + 3] == piece)
+				return true;
+		}
+	}
+}
+
+vector<int> get_valid_locations(int** board)
+{
+	vector <int> valid_locations;
+	for (int col = 0; col < (COLUMN_COUNT); col++)
+	{
+		if (is_valid_location(board, col))
+			valid_locations.push_back(col);
+	}
+	return valid_locations;
+}
+
+bool is_terminal_node(int** board)
+{
+	if (winning_move(board, PLAYER_PIECE) == 0 || winning_move(board, AI_PIECE) == 0 || get_valid_locations(board).size() == 0)
+		return true;
+	else
+		return false;
+}
