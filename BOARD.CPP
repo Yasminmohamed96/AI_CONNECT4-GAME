@@ -51,9 +51,12 @@ void copy(int** A, int**& B)
 
 void drop_piece(int** board, int row, int col, int piece)
 {
-	// set the value of certain row and column by the number of the player 
-	//as he put a piece in this place 
-	board[row][col] = piece;
+	if (row < 6 && col< 7)
+	{
+		// set the value of certain row and column by the number of the player 
+		//as he put a piece in this place 
+		board[row][col] = piece;
+	}
 }
 
 bool is_valid_location(int** board, int col)
@@ -236,7 +239,7 @@ int score_position(int** board, int piece) {
 	{
 		for (int c = 0; c < COLUMN_COUNT - 3; c++)
 		{
-			for (int w = 1; w < WINDOW_LENGTH; w++)
+			for (int w = 0; w < WINDOW_LENGTH; w++)
 			{
 				window.push_back(board[RR + 3 - w][c + w]);
 			}
