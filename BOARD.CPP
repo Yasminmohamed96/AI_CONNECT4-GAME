@@ -1,4 +1,8 @@
-// connect4.cpp 
+// connect4.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include "pch.h"
+
 #include <iostream> 
 using namespace std; 
 #include <math.h>
@@ -71,10 +75,10 @@ int get_next_open_row(int** board, int col)
 void print_board(int** board)
 {
 	//print the board flipped 
-	for (int i = ROW_COUNT; i > 0; i--)
+	for (int i = ROW_COUNT-1; i >= 0; i--)
 	{
 
-		for (int j = COLUMN_COUNT; j > 0; j--)
+		for (int j = 0; j <COLUMN_COUNT; j++)
 		{
 			cout << "|" << board[i][j] << " " << "|";
 		}
@@ -229,3 +233,4 @@ int score_position(int** board, int piece) {
 	return score;
 
 }
+
